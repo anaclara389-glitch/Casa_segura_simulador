@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Segura - Simulação de Clientes</title>
+    <style>
+        :root {
+            --floor-color: #555;
+            --wood: #8b5a2b;
+            --tech: #00b4d8;
+            --neutral: #333;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        h1 {
+            color: #f4f4f4;
+            margin-bottom: 10px;
+        }
+
+        .store-container {
+            width: 900px;
+            height: 400px;
+            background-color: #2a2a2a;
+            border: 4px solid #444;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-right: 2px dashed #444;
+            z-index: 1;
+        }
+        .section:last-child { border-right: none; }
+
+        .sec-tradition { background: linear-gradient(to bottom, rgba(139, 90, 43, 0.2), transparent); }
+        .sec-center { background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent); }
+        .sec-tech { background: linear-gradient(to bottom, rgba(0, 180, 216, 0.2), transparent); }
+
+        .section-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sec-tradition .section-title { background-color: var(--wood); }
+        .sec-center .section-title { background-color: var(--neutral); }
+        .sec-tech .section-title { background-color: var(--tech); color: #000; }
+
+        .prop {
+            font-size: 3rem;
+            margin-top: 20px;
+        }
+
+        .floor {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--floor-color);
+            border-top: 4px solid #222;
+            z-index: 2;
+        }
+
+        .character {
+            position: absolute;
+            bottom: 60px;
+            font-size: 4rem;
+            transition: left 2s ease-in-out, transform 0.5s;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: -60px;
+            background: #fff;
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+        
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px 5px 0;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+        }
+
+        #old-man { left: -100px; }
+        #young-man { left: 950px; transform: scaleX(-1); }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 900px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-tradition { background-color: var(--wood); color: white; }
+        .btn-tech { background-color: var(--tech); color: black; }
+        .btn-center { background-color: #555; color: white; }
+
+    </style>
+</head>
+<body>
+
+    <h1>Simulador de Fluxo da Casa Segura</h1>
+    
+    <div class="store-container">
+        <div class="section sec-tradition">
+            <div class="section-title">Parede de Chaves</div>
+            <div class="prop">🗝️</div>
+        </div>
+
+        <div class="section sec-center">
+            <div class="section-title">Bancada de Testes</div>
+            <div class="prop">🚪</div>
+        </div>
+
+        <div class="section sec-tech">
+            <div class="section-title">Totem Interativo</div>
+            <div class="prop">🖥️</div>
+        </div>
+
+        <div class="floor"></div>
+
+        <div class="character" id="old-man">
+            <div class="speech-bubble" id="bubble-old"></div>
+            👴
+        </div>
+
+        <div class="character" id="young-man">
+            <div class="speech-bubble" id="bubble-young"></div>
+            🧑‍💻
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-tradition" onclick="moveCharacter('old', 120, 'Vou fazer uma cópia de chave...', 1)">👴 Chamar Cliente Antigo</button>
+        <button class="btn-tech" onclick="moveCharacter('young', 750, 'Preciso de uma câmera Wi-Fi...', -1)">🧑‍💻 Chamar Cliente Jovem</button>
+        <button class="btn-center" onclick="testarHibrido()">🚪 Mostrar Kit Híbrido</button>
+        <button class="btn-center" style="background-color: #b33;" onclick="resetStore()">🔄 Resetar Loja</button>
+    </div>
+
+    <script>
+        function moveCharacter(characterType, positionX, speechText, directionScale) {
+            const charElement = document.getElementById(characterType === 'old' ? 'old-man' : 'young-man');
+            const bubbleElement = document.getElementById(characterType === 'old' ? 'bubble-old' : 'bubble-young');
+            
+            // CORREÇÃO: Uso de Template Literals (crases) para as variáveis de estilo
+            charElement.style.transform = scaleX(${directionScale});
+            charElement.style.left = ${positionX}px;
+            
+            bubbleElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                bubbleElement.innerText = speechText;
+                // Mantém o balão sem inverter junto com o personagem
+                bubbleElement.style.transform = scaleX(${directionScale}); 
+                bubbleElement.style.opacity = '1';
+            }, 1000); 
+        }
+
+        function testarHibrido() {
+            moveCharacter('old', 350, 'Olha só, minha chave funciona!', 1);
+            moveCharacter('young', 450, 'Legal, posso usar digital aqui.', -1);
+        }
+
+        function resetStore() {
+            const oldMan = document.getElementById('old-man');
+            const youngMan = document.getElementById('young-man');
+            const bubbleOld = document.getElementById('bubble-old');
+            const bubbleYoung = document.getElementById('bubble-young');
+
+            bubbleOld.style.opacity = '0';
+            bubbleYoung.style.opacity = '0';
+
+            oldMan.style.transform = 'scaleX(1)'; 
+            youngMan.style.transform = 'scaleX(-1)'; 
+
+            oldMan.style.left = '-100px';
+            youngMan.style.left = '950px';
+        }
+    </script>
+
+</body>
+</html>
