@@ -194,16 +194,16 @@
             const charElement = document.getElementById(characterType === 'old' ? 'old-man' : 'young-man');
             const bubbleElement = document.getElementById(characterType === 'old' ? 'bubble-old' : 'bubble-young');
             
-            // CORREÇÃO: Uso de Template Literals (crases) para as variáveis de estilo
-            charElement.style.transform = scaleX(${directionScale});
-            charElement.style.left = ${positionX}px;
+            // CORREÇÃO: Uso de Template Literals (crases ` `) e adição de unidades (px)
+            charElement.style.transform = `scaleX(${directionScale})`;
+            charElement.style.left = `${positionX}px`;
             
             bubbleElement.style.opacity = '0';
             
             setTimeout(() => {
                 bubbleElement.innerText = speechText;
-                // Mantém o balão sem inverter junto com o personagem
-                bubbleElement.style.transform = scaleX(${directionScale}); 
+                // Inverte o balão de volta para o texto não ficar espelhado
+                bubbleElement.style.transform = `scaleX(${directionScale})`; 
                 bubbleElement.style.opacity = '1';
             }, 1000); 
         }
